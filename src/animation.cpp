@@ -2,7 +2,7 @@
  * Animation.cpp
  *
  *  Created on: 9/09/2014
- *      Author: Bandit
+ *      Author: Elliot Wilde
  */
 
 #include "animation.h"

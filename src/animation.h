@@ -2,7 +2,7 @@
  * Animation.h
  *
  *  Created on: 9/09/2014
- *      Author: Bandit
+ *      Author: Elliot Wilde
  */
 
 #ifndef ANIMATION_H_
