@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include <gl/glut.h>
 #include "define.h"
+#include "animation.h"
 
 GLuint g_mainWnd;
 GLuint g_nWinWidth = G308_WIN_WIDTH;
@@ -56,6 +57,8 @@ int main(int argc, char** argv){
 	G308_SetCamera();
 	G308_SetLight();
 
+	Animation a((void*)0);
+	a.draw();
 
 	glutMainLoop();
 
@@ -224,15 +227,18 @@ void mouseFunc(int button, int state, int x, int y){
 }
 
 void rClickRelease(int x, int y){
+	if (!rightdown) fprintf(stderr, "Something went wrong: Right Mouse released when not down\n");
 	rightdown=false;
 
 }
 
 void lClickRelease(int x, int y){
+	if (!leftdown) fprintf(stderr, "Something went wrong: Left Mouse released when not down\n");
 	leftdown=false;
 }
 
 void mClickRelease(int x, int y){
+	if (!middledown) fprintf(stderr, "Something went wrong: Middle Mouse released when not down\n");
 	middledown=false;
 }
 
@@ -241,13 +247,13 @@ void G308_Reshape(int w, int h) {
 	if (h>0) g_nWinHeight = h;
 	// if you try and resize the window below a certain size, it snaps it to that size
 	if (w<640) {
-		printf("window too small, resizing\n");
+		fprintf(stderr, "window too small, resizing\n");
 		g_nWinWidth = 640;
 		glutReshapeWindow(g_nWinWidth, g_nWinHeight);
 		return;
 	}
 	if (h<720) {
-		printf("window too small, resizing\n");
+		fprintf(stderr, "window too small, resizing\n");
 		g_nWinHeight = 720;
 		glutReshapeWindow(g_nWinWidth, g_nWinHeight);
 		return;
