@@ -15,8 +15,8 @@ GLuint g_mainWnd;
 GLuint g_nWinWidth = G308_WIN_WIDTH;
 GLuint g_nWinHeight = G308_WIN_HEIGHT;
 
-GLuint g_paneWidth = 320;
-GLuint g_paneHeight = 360;
+GLuint g_paneWidth = G308_PANE_WIDTH;
+GLuint g_paneHeight = G308_PANE_HEIGHT;
 
 void G308_Reshape(int w, int h);
 void G308_display();
@@ -27,7 +27,7 @@ void G308_SetLight();
 void G308_ColourDraw();
 
 
-void upd(float, float, float, float, float, float);
+void upd(float, float, float, float, float, float, float);
 
 void mouseFunc(int, int, int, int);
 bool leftdown=false, rightdown=false, middledown=false;
@@ -37,6 +37,8 @@ int ldx, ldy, rdx, rdy, mdx, mdy;
 void mClickRelease(int, int);
 void lClickRelease(int, int);
 void rClickRelease(int, int);
+
+Animation* anim;
 
 void idle() {
 	glutPostRedisplay();
@@ -60,9 +62,11 @@ int main(int argc, char** argv){
 	G308_SetCamera();
 	G308_SetLight();
 
-
-	Animation a(upd);
-	a.draw();
+	anim = new Animation(upd);
+	anim->add(250, 250, 1);
+	anim->add(225, 190, 1);
+	anim->add(150, 173, 1);
+	anim->add(80, 55, 1);
 
 	glutMainLoop();
 
@@ -168,7 +172,7 @@ void G308_display(){
 
 	// draw the bottom pane
 	glPushMatrix();
-	glTranslatef(g_nWinWidth-g_paneWidth,g_nWinHeight-g_paneHeight,0);
+	glTranslatef(g_nWinWidth-g_paneWidth,g_paneHeight,0);
 	glColor4f(.2, .2, .2, 0.8);
 	glBegin( GL_QUADS );
 		glVertex2f(0, 0);
@@ -184,6 +188,10 @@ void G308_display(){
 		glVertex2f(g_paneWidth, 1);
 	glEnd();
 	// do stuff on the bottom pane
+	glPopMatrix();
+	glPushMatrix();
+		glTranslatef(g_nWinWidth-g_paneWidth,0,0);
+	anim->draw();
 	glPopMatrix();
 
 
@@ -233,12 +241,13 @@ void mouseFunc(int button, int state, int x, int y){
 void rClickRelease(int x, int y){
 	if (!rightdown) fprintf(stderr, "Something went wrong: Right Mouse released when not down\n");
 	rightdown=false;
-
 }
 
 void lClickRelease(int x, int y){
 	if (!leftdown) fprintf(stderr, "Something went wrong: Left Mouse released when not down\n");
 	leftdown=false;
+	// work out where we released, and how close it was the leftdown
+	// then do stuff with that information
 }
 
 void mClickRelease(int x, int y){
@@ -246,7 +255,7 @@ void mClickRelease(int x, int y){
 	middledown=false;
 }
 
-void upd(float a, float b, float c, float d, float e, float f){
+void upd(float x, float y, float z, float r, float rx, float ry, float rz){
 
 }
 
