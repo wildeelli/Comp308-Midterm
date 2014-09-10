@@ -26,6 +26,9 @@ void G308_SetLight();
 
 void G308_ColourDraw();
 
+
+void upd(float, float, float, float, float, float);
+
 void mouseFunc(int, int, int, int);
 bool leftdown=false, rightdown=false, middledown=false;
 // position where left/right/middle mouse button was pressed
@@ -57,7 +60,8 @@ int main(int argc, char** argv){
 	G308_SetCamera();
 	G308_SetLight();
 
-	Animation a((void*)0);
+
+	Animation a(upd);
 	a.draw();
 
 	glutMainLoop();
@@ -240,6 +244,10 @@ void lClickRelease(int x, int y){
 void mClickRelease(int x, int y){
 	if (!middledown) fprintf(stderr, "Something went wrong: Middle Mouse released when not down\n");
 	middledown=false;
+}
+
+void upd(float a, float b, float c, float d, float e, float f){
+
 }
 
 void G308_Reshape(int w, int h) {

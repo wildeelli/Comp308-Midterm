@@ -7,12 +7,13 @@
 
 #include "animation.h"
 
-Animation::Animation(void* animateeee) {
+Animation::Animation(void (* callback) (float,float,float,float,float,float)) {
 	// TODO Auto-generated constructor stub
 	xpoints = new float[4];
 	ypoints = new float[4];
 	maxsize = 4;
 	keyframes = 0;
+	update = callback;
 
 }
 
@@ -29,6 +30,10 @@ void Animation::move(float, float, float, float){
 }
 
 float* Animation::next(int){
+	return 0;
+}
+
+float* Animation::gotoTime(float){
 	return 0;
 }
 
