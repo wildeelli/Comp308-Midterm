@@ -23,6 +23,10 @@
 #define G308_WIN_WIDTH	1280
 #define G308_WIN_HEIGHT	720
 
+// Data pane Sizes
+#define G308_PANE_WIDTH 320
+#define G308_PANE_HEIGHT 360
+
 // Projection parameters
 #define G308_FOVY		20.0
 #define G308_ZNEAR_3D	1
