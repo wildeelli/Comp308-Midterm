@@ -18,6 +18,7 @@ GLuint g_nWinHeight = G308_WIN_HEIGHT;
 GLuint g_paneWidth = G308_PANE_WIDTH;
 GLuint g_paneHeight = G308_PANE_HEIGHT;
 
+void G308_keyboardListener(unsigned char, int, int);
 void G308_Reshape(int w, int h);
 void G308_display();
 void G308_SetCamera();
@@ -40,6 +41,9 @@ void rClickRelease(int, int);
 
 Animation* anim;
 
+float tx=0, tz=0;
+bool playing=false;
+
 void idle() {
 	glutPostRedisplay();
 
@@ -54,6 +58,7 @@ int main(int argc, char** argv){
 	glutInitWindowSize(g_nWinWidth, g_nWinHeight);
 	g_mainWnd = glutCreateWindow("COMP308 MidTerm Project");
 	
+	glutKeyboardFunc(G308_keyboardListener);
 	glutDisplayFunc(G308_display);
 	glutReshapeFunc(G308_Reshape);
 	glutIdleFunc(idle);
@@ -66,6 +71,8 @@ int main(int argc, char** argv){
 	anim->add(250, 250, 1);
 	anim->add(225, 190, 1);
 	anim->add(150, 173, 1);
+	anim->add(135, 190, 1);
+	anim->add(100, 100, 1);
 	anim->add(80, 55, 1);
 
 	glutMainLoop();
@@ -121,8 +128,10 @@ void G308_display(){
 	glPushMatrix();
 	// draw a spinning thing to test drawing
 	glScalef(.1,.1,.1);
-	glRotatef(rot+=5, .5,.8, -.5);
-	glRotatef(-rot, .0,-.8, -.5);
+	if (playing) anim->apply(1./60.);
+	glTranslated(tx, 0, tz);
+//	glRotatef(rot+=5, .5,.8, -.5);
+//	glRotatef(-rot, .0,-.8, -.5);
 	for (int i=0; i<6; ++i){
 		glColor3f(.7,.7,1./float(i));
 		// glColor3f(.8,.8,.8);
@@ -207,7 +216,7 @@ void G308_display(){
 
 // Draws all selectable elements on the screen using their colour-pickable shapes and colours
 void G308_ColourDraw(){
-
+	// TODO: this
 
 }
 
@@ -246,6 +255,12 @@ void rClickRelease(int x, int y){
 void lClickRelease(int x, int y){
 	if (!leftdown) fprintf(stderr, "Something went wrong: Left Mouse released when not down\n");
 	leftdown=false;
+//	printf("%d %d\n", x, y);
+	if (x > g_nWinWidth - g_paneWidth && x < g_nWinWidth && y > 0 && y < g_paneHeight){
+		int mx = x - (g_nWinWidth - g_paneWidth);
+		int my = y;
+		anim->add(mx, my, 1);
+	}
 	// work out where we released, and how close it was the leftdown
 	// then do stuff with that information
 }
@@ -255,8 +270,11 @@ void mClickRelease(int x, int y){
 	middledown=false;
 }
 
+// this should update the position of the animatable object
 void upd(float x, float y, float z, float r, float rx, float ry, float rz){
-
+	tx = (20./x)-10.;
+	tz = (20./z)-10.;
+	printf("tx: %.2f, tz: %.2f\n", tx, tz);
 }
 
 void G308_Reshape(int w, int h) {
@@ -282,6 +300,10 @@ void G308_Reshape(int w, int h) {
 //	g_paneWidth = 320;
 }
 
+void G308_keyboardListener(unsigned char key, int x, int y) {
+	if (key==' ' || key =='p') playing = !playing;
+}
+
 void G308_SetCamera() {
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
@@ -292,7 +314,8 @@ void G308_SetCamera() {
 		// gluLookAt(0.0, 2.0, 7.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0);
 	// else
 //		gluLookAt(0.0, 10.0, 0.0, 0.0, -1.0, 0.0, 0.0, 0.0, 1.0);
-	gluLookAt(0.0, 2.0, 7.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0);
+//	gluLookAt(0.0, 2.0, 7.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0);
+	gluLookAt(0.0, 15.0, 0.0, 0.0, -1.0, 0.0, 0.0, 0.0, -1.0);
 }
 
 void G308_SetOrtho(){
