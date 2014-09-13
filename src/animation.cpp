@@ -52,9 +52,32 @@ void Animation::remove(float, float){
 
 }
 
-void Animation::move(float, float, float, float){
+void Animation::move(float x1, float z1, float x2, float z2){
 	// TODO: move the value closest to the first two passed floats to the second two passed floats?
 	// fail if there isn't one nearby?
+	printf("anim->move: x1:%.1f x2:%.1f z1:%.1f z2:%.1f\n", x1, x2, z1, z2);
+	// find the first point within the square bounding +8,-8
+	float bound = 8;
+	int i;
+	for (i=0; i<keyframes; ++i){
+		float z = zpoints[i];
+		if (z-bound < z1 && z+bound > z1){
+			float x = xpoints[i];
+			if (x-bound < x1 && x+bound > x1){
+				break;
+			}
+		}
+	}
+	// if nothing was found, exit
+	if (i==maxsize) {
+		printf("Nothing found at (%.0f, %.0f)\n", x1, z1);
+		return;
+	}
+	// else we do stuff, muahahahaha
+	printf("Moved (%.1f, %.1f) ", xpoints[i], zpoints[i]);
+	xpoints[i] = x2;
+	zpoints[i] = z2;
+	printf("to (%.1f, %.1f)\n", xpoints[i], zpoints[i]);
 
 }
 
