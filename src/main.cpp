@@ -33,11 +33,11 @@ void upd(float, float, float, float, float, float, float);
 void mouseFunc(int, int, int, int);
 bool leftdown=false, rightdown=false, middledown=false;
 // position where left/right/middle mouse button was pressed
-int ldx, ldy, rdx, rdy, mdx, mdy;
+GLuint ldx, ldy, rdx, rdy, mdx, mdy;
 // functions that get called on mouse up
-void mClickRelease(int, int);
-void lClickRelease(int, int);
-void rClickRelease(int, int);
+void mClickRelease(unsigned int, unsigned int);
+void lClickRelease(unsigned int, unsigned int);
+void rClickRelease(unsigned int, unsigned int);
 
 Animation* anim;
 
@@ -252,12 +252,12 @@ void mouseFunc(int button, int state, int x, int y){
 
 }
 
-void rClickRelease(int x, int y){
+void rClickRelease(unsigned int x, unsigned int y){
 	if (!rightdown) fprintf(stderr, "Something went wrong: Right Mouse released when not down\n");
 	rightdown=false;
 }
 
-void lClickRelease(int x, int y){
+void lClickRelease(unsigned int x, unsigned int y){
 	if (!leftdown) fprintf(stderr, "Something went wrong: Left Mouse released when not down\n");
 	leftdown=false;
 //	printf("%d %d\n", x, y);
@@ -270,15 +270,20 @@ void lClickRelease(int x, int y){
 	// then do stuff with that information
 }
 
-void mClickRelease(int x, int y){
+void mClickRelease(unsigned int x, unsigned int y){
 	if (!middledown) fprintf(stderr, "Something went wrong: Middle Mouse released when not down\n");
 	middledown=false;
+	if (x > g_nWinWidth - g_paneWidth && x < g_nWinWidth && y > 0 && y < g_paneHeight &&
+			mdx > g_nWinWidth - g_paneWidth && mdx < g_nWinWidth && mdy > 0 && mdy < g_paneHeight){
+		anim->move(mdx - (g_nWinWidth - g_paneWidth), mdy, x - (g_nWinWidth - g_paneWidth), y);
+	}
 }
 
 // this should update the position of the animatable object
 void upd(float x, float y, float z, float r, float rx, float ry, float rz){
-	tx = (100./x);
-	tz = (100./z);
+	// convert the motion from animation space to world space
+	tx = (20./g_paneWidth)*x - 10.;
+	tz = (20./g_paneHeight)*z - 10.;
 //	printf("tx: %.2f, tz: %.2f\n", tx, tz);
 }
 
@@ -301,12 +306,11 @@ void G308_Reshape(int w, int h) {
 	
 	glViewport(0, 0, g_nWinWidth, g_nWinHeight);
 	G308_SetCamera();
-//	g_paneHeight = g_nWinHeight/2;
-//	g_paneWidth = 320;
 }
 
 void G308_keyboardListener(unsigned char key, int x, int y) {
 	if (key==' ' || key =='p') playing = !playing;
+	(void)(x); (void)(y);
 }
 
 void G308_SetCamera() {
@@ -320,7 +324,7 @@ void G308_SetCamera() {
 	// else
 //		gluLookAt(0.0, 10.0, 0.0, 0.0, -1.0, 0.0, 0.0, 0.0, 1.0);
 //	gluLookAt(6.0, 4.0, 6.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0);
-	gluLookAt(0.0, 15.0, 0.0, 0.0, -1.0, 0.0, 0.0, 0.0, -1.0);
+	gluLookAt(0.0, 25.0, 0.0, 0.0, -1.0, 0.0, 0.0, 0.0, -1.0);
 }
 
 void G308_SetOrtho(){
