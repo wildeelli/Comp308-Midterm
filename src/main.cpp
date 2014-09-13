@@ -68,12 +68,17 @@ int main(int argc, char** argv){
 	G308_SetLight();
 
 	anim = new Animation(upd);
-	anim->add(250, 250, 1);
-	anim->add(225, 190, 1);
-	anim->add(150, 173, 1);
-	anim->add(135, 190, 1);
-	anim->add(100, 100, 1);
-	anim->add(80, 55, 1);
+	anim->add(163, 47, 1);
+	anim->add(254, 95, 1);
+	anim->add(277, 183, 1);
+	anim->add(243, 279, 1);
+	anim->add(164, 320, 1);
+	anim->add(66, 264, 1);
+	anim->add(43, 174, 1);
+	anim->add(85, 78, 1);
+
+
+
 
 	glutMainLoop();
 
@@ -272,9 +277,9 @@ void mClickRelease(int x, int y){
 
 // this should update the position of the animatable object
 void upd(float x, float y, float z, float r, float rx, float ry, float rz){
-	tx = (20./x)-10.;
-	tz = (20./z)-10.;
-	printf("tx: %.2f, tz: %.2f\n", tx, tz);
+	tx = (100./x);
+	tz = (100./z);
+//	printf("tx: %.2f, tz: %.2f\n", tx, tz);
 }
 
 void G308_Reshape(int w, int h) {
@@ -314,7 +319,7 @@ void G308_SetCamera() {
 		// gluLookAt(0.0, 2.0, 7.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0);
 	// else
 //		gluLookAt(0.0, 10.0, 0.0, 0.0, -1.0, 0.0, 0.0, 0.0, 1.0);
-//	gluLookAt(0.0, 2.0, 7.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0);
+//	gluLookAt(6.0, 4.0, 6.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0);
 	gluLookAt(0.0, 15.0, 0.0, 0.0, -1.0, 0.0, 0.0, 0.0, -1.0);
 }
 

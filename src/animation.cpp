@@ -7,6 +7,7 @@
 
 #include <cstdlib>
 #include <cstdio>
+#include <ctime>
 #include "animation.h"
 #include "define.h"
 #include <gl/glut.h>
@@ -70,7 +71,7 @@ void Animation::apply(float time){
 	next(time);
 }
 
-void Animation::next(float time){
+bool Animation::next(float time){
 	currentTime += time;
 	timeInFrame += time;
 //	printf("itif:%.1f ", timeInFrame);
@@ -79,14 +80,20 @@ void Animation::next(float time){
 	if (timeInFrame >= keytimes[currentFrame]){
 		++currentFrame;
 		if (currentFrame==keyframes) {
+			// TODO: wraparound currenttime, and timeinframe
+			timeInFrame = timeInFrame - keytimes[currentFrame-1];
 			currentFrame=0;
+			currentTime = timeInFrame;
 
+//			printf("ct:%.1f st:%.1f kt:%.1f tif:%.1ft\n", currentTime, starttimes[currentFrame], keytimes[currentFrame], timeInFrame);
+			return true;
 		}
 		else {
-			timeInFrame = currentTime - starttimes[currentFrame-1];
+			timeInFrame = currentTime - starttimes[currentFrame];
 		}
-//		printf("ct:%.1f st:%.1f kt:%.1f ", currentTime, starttimes[currentFrame], keytimes[currentFrame]);
 	}
+//		printf("ct:%.1f st:%.1f kt:%.1f f\n", currentTime, starttimes[currentFrame], keytimes[currentFrame]);
+	return false;
 //	printf("etif:%.1f\n", timeInFrame);
 
 
@@ -180,15 +187,32 @@ void Animation::draw(){
 		glVertex2f(xpoints[i], zpoints[i]+4);
 		glVertex2f(xpoints[i]+4, zpoints[i]);
 	glEnd();
+	{
+		// draw a doofah denoting where the animation is up to
+		float x = getcurrentx();
+		float z = getcurrentz();
+		glColor3f(.2, .8, .8);
+		glBegin( GL_QUADS );
+			glVertex2f(x, z-4);
+			glVertex2f(x-4, z);
+			glVertex2f(x, z+4);
+			glVertex2f(x+4, z);
+		glEnd();
+
+	}
 
 	// now we draw the curves
 	// TODO: fix
-	gotoTime(0);
+//	gotoTime(0);
+	currentFrame = 0;
+	currentTime =  0;
+	timeInFrame =  0;
 	glColor3f(.8, .8, .8);
 //	printf("\nframe start:\n");
-	while (currentTime < starttimes[keyframes-1]){
+	bool loop = true;
+	while (loop){
 		float x1 =getcurrentx(), z1 = getcurrentz();
-		next(1./60.);
+		if (next(.1)) loop=false;
 		float x2 =getcurrentx(), z2 = getcurrentz();
 //		printf("%d\t%.1f\t%.1f\t%.1f\t%.1f\n",currentFrame, x1, z1, x2, z2);
 		if (x1 == -1 || x2 == -1 || z1 == -1 || z2 == -1) continue;

@@ -19,7 +19,7 @@ public:
 	// calls apply, then calls next(float)
 	void apply(float);
 	// sets the animation time forwards by the specifed number of seconds
-	void next(float);
+	bool next(float);
 	void gotoTime(float);
 	void draw();
 	void draw_Colour();
