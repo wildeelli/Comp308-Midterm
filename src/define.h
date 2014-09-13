@@ -63,11 +63,23 @@ struct G308_UVcoord {
 	float v;
 };
 
+/*
+ * Normals and textures need to be defined by face, not by vertex.
+ * Reminder: these are just indicies into the normal and texture arrays.
+ * n1 and t1 are the normals and texture co-ordinates for vertex 1 of this face.
+ * Same goes for (v2,n2,t2) etc.
+ */
 struct G308_Triangle {
 
 	unsigned int v1;
 	unsigned int v2;
 	unsigned int v3;
+	unsigned int n1;
+	unsigned int n2;
+	unsigned int n3;
+	unsigned int t1;
+	unsigned int t2;
+	unsigned int t3;
 };
 
 struct G308_Quad {

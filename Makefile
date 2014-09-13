@@ -11,7 +11,7 @@ SRC = ./src/
 
 all: $(BUILD)MidTerm
 
-$(BUILD)MidTerm: $(BUILD)quaternion.o $(BUILD)main.o $(BUILD)animation.o
+$(BUILD)MidTerm: $(BUILD)quaternion.o $(BUILD)main.o $(BUILD)animation.o $(BUILD)G308_Geometry.o
 	$(CC) -o $@ $^ -lm -lopengl32 -lGLU32 -lfreeglut $(LPATH) $(LDPATH)
 	
 $(BUILD)%.o:  $(SRC)%.cpp
@@ -19,7 +19,7 @@ $(BUILD)%.o:  $(SRC)%.cpp
 	
 debug: $(DEBUG)MidTerm
 
-$(DEBUG)MidTerm: $(DEBUG)quaternion.o $(DEBUG)main.o $(BUILD)animation.o
+$(DEBUG)MidTerm: $(DEBUG)quaternion.o $(DEBUG)main.o $(BUILD)animation.o $(BUILD)G308_Geometry.o
 	$(CC) -o $@ $^ -lm -lopengl32 -lGLU32 -lfreeglut $(LPATH) $(LDPATH)
 	
 $(DEBUG)%.o:  $(SRC)%.cpp
