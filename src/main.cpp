@@ -7,7 +7,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <gl/glut.h>
+#include <GL/glut.h>
 #include "define.h"
 #include "animation.h"
 #include "G308_Geometry.h"

@@ -10,7 +10,7 @@
 #include <ctime>
 #include "animation.h"
 #include "define.h"
-#include <gl/glut.h>
+#include <GL/glut.h>
 
 Animation::Animation(void (* callback) (float,float,float,float,float,float,float)) {
 	xpoints = new float[4];
@@ -129,7 +129,7 @@ void Animation::apply(float time){
 }
 
 bool Animation::next(float time){
-	if (keyframes==0) false;
+	if (keyframes==0) return false;
 	currentTime += time;
 	timeInFrame += time;
 //	printf("itif:%.1f ", timeInFrame);
