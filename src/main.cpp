@@ -10,6 +10,9 @@
 #include <gl/glut.h>
 #include "define.h"
 #include "animation.h"
+#include "G308_Geometry.h"
+#include <ctime>
+
 
 GLuint g_mainWnd;
 GLuint g_nWinWidth = G308_WIN_WIDTH;
@@ -39,7 +42,12 @@ void mClickRelease(unsigned int, unsigned int);
 void lClickRelease(unsigned int, unsigned int);
 void rClickRelease(unsigned int, unsigned int);
 
-Animation* anim;
+Animation* anim = NULL;
+G308_Geometry* g_pGeometry = NULL;
+
+clock_t lastFrame;
+
+
 
 float tx=0, tz=0;
 bool playing=false;
@@ -51,7 +59,10 @@ void idle() {
 
 int main(int argc, char** argv){
 	// check command line args
-
+//	if(argc != 2){
+//		printf("Obj filename expected\n./Ass1 Teapot.obj\n");
+//		exit(EXIT_FAILURE);
+//	}
 	// init glut
 	glutInit(&argc, argv);
 	glutInitDisplayMode( GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA );
@@ -64,24 +75,23 @@ int main(int argc, char** argv){
 	glutIdleFunc(idle);
 	glutMouseFunc(mouseFunc);
 
+	if (argc==2){
+		printf("loading (hopefully) obj\n");
+		g_pGeometry = new G308_Geometry;
+		g_pGeometry->ReadOBJ(argv[1]); // 1) read OBJ function
+		g_pGeometry->CreateGLPolyGeometry(); // 2) create GL Geometry as polygon
+	} else {
+		printf("Obj file expected, using fallback, it's not pretty");
+	}
+
 	G308_SetCamera();
 	G308_SetLight();
 
 	anim = new Animation(upd);
-	anim->add(163, 47, 1);
-	anim->add(254, 95, 1);
-	anim->add(277, 183, 1);
-	anim->add(243, 279, 1);
-	anim->add(164, 320, 1);
-	anim->add(66, 264, 1);
-	anim->add(43, 174, 1);
-	anim->add(85, 78, 1);
-
-
-
 
 	glutMainLoop();
-
+	if(g_pGeometry != NULL) delete g_pGeometry;
+	if(anim) delete anim;
 	return 0;
 }
 
@@ -129,28 +139,36 @@ void G308_display(){
 	glPushMatrix();
 	drawFloor();
 	glPushMatrix();
-	glTranslatef(0,1,0);
+//	glTranslatef(0,1,0);
 	glPushMatrix();
 	// draw a spinning thing to test drawing
 	glScalef(.1,.1,.1);
-	if (playing) anim->apply(1./60.);
+	if (playing) {
+		anim->apply(((float)(clock()-lastFrame)/CLOCKS_PER_SEC));
+	} else {
+		anim->apply(0);
+	}
+	lastFrame = clock();
 	glTranslated(tx, 0, tz);
-//	glRotatef(rot+=5, .5,.8, -.5);
-//	glRotatef(-rot, .0,-.8, -.5);
-	for (int i=0; i<6; ++i){
-		glColor3f(.7,.7,1./float(i));
-		// glColor3f(.8,.8,.8);
-		glPushMatrix();
-		glRotatef(60*i, 0,0,1);
-		glBegin( GL_TRIANGLES );
-			glNormal3f(0,0,1);
-			glVertex3f(0,0,1);
-			glNormal3f(-0.5773,1,0);
-			glVertex3f(-0.5773,1,0);
-			glNormal3f(0.5773,1,0);
-			glVertex3f(0.5773,1,0);
-		glEnd();
-		glPopMatrix();
+	if (g_pGeometry){
+		g_pGeometry->RenderGeometry();
+	} else {
+		// if there was no file loaded, draw a thing
+		for (int i=0; i<6; ++i){
+			glColor3f(.7,.7,1./float(i));
+			// glColor3f(.8,.8,.8);
+			glPushMatrix();
+			glRotatef(60*i, 0,0,1);
+			glBegin( GL_TRIANGLES );
+				glNormal3f(0,0,1);
+				glVertex3f(0,0,1);
+				glNormal3f(-0.5773,1,0);
+				glVertex3f(-0.5773,1,0);
+				glNormal3f(0.5773,1,0);
+				glVertex3f(0.5773,1,0);
+			glEnd();
+			glPopMatrix();
+		}
 	}
 	// aaaand end of the spinning thing
 	glPopMatrix();
@@ -285,8 +303,8 @@ void mClickRelease(unsigned int x, unsigned int y){
 // this should update the position of the animatable object
 void upd(float x, float y, float z, float r, float rx, float ry, float rz){
 	// convert the motion from animation space to world space
-	tx = (20./g_paneWidth)*x - 10.;
-	tz = (20./g_paneHeight)*z - 10.;
+	tx = (40./g_paneWidth)*x - 20.;
+	tz = (40./g_paneHeight)*z - 20.;
 //	printf("tx: %.2f, tz: %.2f\n", tx, tz);
 }
 
@@ -326,8 +344,8 @@ void G308_SetCamera() {
 		// gluLookAt(0.0, 2.0, 7.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0);
 	// else
 //		gluLookAt(0.0, 10.0, 0.0, 0.0, -1.0, 0.0, 0.0, 0.0, 1.0);
-//	gluLookAt(6.0, 4.0, 6.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0);
-	gluLookAt(0.0, 25.0, 0.0, 0.0, -1.0, 0.0, 0.0, 0.0, -1.0);
+	gluLookAt(6.0, 4.0, 6.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+//	gluLookAt(0.0, 15.0, 0.0, 0.0, -1.0, 0.0, 0.0, 0.0, -1.0);
 }
 
 void G308_SetOrtho(){

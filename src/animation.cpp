@@ -49,6 +49,7 @@ void Animation::add(float x, float z, float t){
 void Animation::remove(float x1, float z1){
 	// TODO: remove the value nearest to the passed floats?
 	// fail if there isn't one nearby?
+	if (keyframes==0) return;
 	printf("anim->remove: x1:%.1f z1:%.1f\n", x1, z1);
 	// find the first point within the square bounding +8,-8
 	float bound = 8;
@@ -88,6 +89,7 @@ void Animation::remove(float x1, float z1){
 
 void Animation::move(float x1, float z1, float x2, float z2){
 	// fail if there isn't one nearby?
+	if (keyframes==0) return;
 	printf("anim->move: x1:%.1f x2:%.1f z1:%.1f z2:%.1f\n", x1, x2, z1, z2);
 	// find the first point within the square bounding +8,-8
 	float bound = 8;
@@ -117,9 +119,8 @@ void Animation::move(float x1, float z1, float x2, float z2){
 void Animation::apply(){
 	// need to interpolate
 	// is there one frame behind, and two frames ahead? if so, do something, else don't
-//	if (currentFrame > 0 && currentFrame < keyframes-1){
-		update(getcurrentx(), 0, getcurrentz(), 0, 0, 0, 0);
-//	}
+	if (keyframes==0) return;
+	update(getcurrentx(), 0, getcurrentz(), 0, 0, 0, 0);
 }
 
 void Animation::apply(float time){
@@ -128,6 +129,7 @@ void Animation::apply(float time){
 }
 
 bool Animation::next(float time){
+	if (keyframes==0) false;
 	currentTime += time;
 	timeInFrame += time;
 //	printf("itif:%.1f ", timeInFrame);
@@ -157,6 +159,7 @@ bool Animation::next(float time){
 
 void Animation::gotoTime(float time){
 	// set current time to zero, then apply(time)?
+	if (keyframes==0) return;
 	currentTime = 0;
 	next(time);
 
@@ -169,7 +172,7 @@ float spline(float u, float p0, float p1, float p2, float p3){
 }
 
 float Animation::getcurrentx(){
-	// TODO: wraparound?
+	if (keyframes==0) return -1;
 	float p0 = xpoints[currentFrame-1], p1 = xpoints[currentFrame];
 	float p2 = xpoints[currentFrame+1], p3 = xpoints[currentFrame+2];
 	if (currentFrame == 0) {
@@ -190,6 +193,7 @@ float Animation::getcurrentx(){
 }
 
 float Animation::getcurrentz(){
+	if (keyframes==0) return -1;
 	float p0 = zpoints[currentFrame-1], p1 = zpoints[currentFrame];
 	float p2 = zpoints[currentFrame+1], p3 = zpoints[currentFrame+2];
 	if (currentFrame == 0) p0 = zpoints[keyframes-1];
@@ -210,6 +214,7 @@ void Animation::draw(){
 	// TODO: draw the current path
 	// TODO: transform the x and z locations into a 320x360 window
 	// store the current time and frame values
+	if (keyframes==0) return;
 	float ctime = currentTime;
 	float tframe = timeInFrame;
 	int cframe = currentFrame;
