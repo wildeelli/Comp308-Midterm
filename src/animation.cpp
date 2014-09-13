@@ -46,14 +46,47 @@ void Animation::add(float x, float z, float t){
 
 }
 
-void Animation::remove(float, float){
+void Animation::remove(float x1, float z1){
 	// TODO: remove the value nearest to the passed floats?
 	// fail if there isn't one nearby?
+	printf("anim->remove: x1:%.1f z1:%.1f\n", x1, z1);
+	// find the first point within the square bounding +8,-8
+	float bound = 8;
+	int i;
+	for (i=0; i<keyframes; ++i){
+		float z = zpoints[i];
+		if (z-bound < z1 && z+bound > z1){
+			float x = xpoints[i];
+			if (x-bound < x1 && x+bound > x1){
+				break;
+			}
+		}
+	}
+	// if nothing was found, exit
+	if (i==keyframes) {
+		printf("Nothing found at (%.0f, %.0f)\n", x1, z1);
+		return;
+	}
+	if (i==0 && keyframes==1){
+		printf("Cannot remove the last keyframe\n");
+		return;
+	}
+	--keyframes;
+	float time = keytimes[i];
+	for (;i<keyframes; ++i){
+		xpoints[i] = xpoints[i+1];
+		zpoints[i] = zpoints[i+1];
+		keytimes[i] = keytimes[i+1];
+		starttimes[i] = starttimes[i+1] - time;
+	}
+
+	for (int i=0; i<keyframes; ++i){
+		printf("frame: %d \tx:%.1f\tz:%.1f\tft:%.1f\tst%.1f\n", i, xpoints[i], zpoints[i], keytimes[i], starttimes[i]);
+	}
 
 }
 
 void Animation::move(float x1, float z1, float x2, float z2){
-	// TODO: move the value closest to the first two passed floats to the second two passed floats?
 	// fail if there isn't one nearby?
 	printf("anim->move: x1:%.1f x2:%.1f z1:%.1f z2:%.1f\n", x1, x2, z1, z2);
 	// find the first point within the square bounding +8,-8
@@ -69,7 +102,7 @@ void Animation::move(float x1, float z1, float x2, float z2){
 		}
 	}
 	// if nothing was found, exit
-	if (i==maxsize) {
+	if (i==keyframes) {
 		printf("Nothing found at (%.0f, %.0f)\n", x1, z1);
 		return;
 	}

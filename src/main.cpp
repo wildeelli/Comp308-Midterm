@@ -255,6 +255,9 @@ void mouseFunc(int button, int state, int x, int y){
 void rClickRelease(unsigned int x, unsigned int y){
 	if (!rightdown) fprintf(stderr, "Something went wrong: Right Mouse released when not down\n");
 	rightdown=false;
+	if (rdx > g_nWinWidth - g_paneWidth && rdx < g_nWinWidth && rdy > 0 && rdy < g_paneHeight){
+		anim->remove(rdx - (g_nWinWidth - g_paneWidth), rdy);
+	}
 }
 
 void lClickRelease(unsigned int x, unsigned int y){
